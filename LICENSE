@@ -1,0 +1,44 @@
+OpenHeader — Source-Available Licence
+Copyright (c) 2026 the OpenHeader authors. All rights reserved.
+
+This source code is published so that anyone can read it, audit it, and check
+that the extension does what it claims. That is the point: the product exists
+because a signed build was found to contain a browsing-history collector nobody
+could see. Code you cannot read is a promise you cannot check.
+
+Reading it is not the same as being free to ship it, and this licence says so
+plainly.
+
+WHAT YOU MAY DO
+
+1. View, read, audit and study this source code, for any purpose.
+2. Copy it and modify it locally, and build and run your own modified copy on
+   machines you control, for your own use, evaluation, testing or security
+   research.
+3. Quote excerpts of it when discussing, reviewing or reporting on it, including
+   in security advisories and bug reports.
+
+WHAT YOU MAY NOT DO
+
+4. You may not redistribute this source code or any work derived from it, in
+   source or compiled form, in whole or in part, to any third party.
+5. You may not publish, list, or otherwise make available a build of this
+   software — modified or unmodified — in any extension store, package registry,
+   app marketplace or download location.
+6. You may not sell, sublicense, rent or offer this software or any derivative of
+   it as a product or as part of a service.
+7. You may not remove or alter this licence, the copyright notice, or the
+   product's privacy statements in any copy you make.
+
+Permissions beyond this licence may be granted in writing by the copyright
+holder. Contributions offered to this project are licensed to the copyright
+holder under these same terms.
+
+NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

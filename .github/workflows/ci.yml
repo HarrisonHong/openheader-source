@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` requires the committed lockfile to be in sync with package.json.
+      - name: Install (locked)
+        run: npm ci
+
+      # Supply-chain gate. A moderate-or-worse advisory fails the build.
+      - name: Audit dependencies
+        run: npm audit --audit-level=moderate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run compile
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # Belt and braces: assert the shipped bundle has no dynamic-code sinks and
+      # that the CSP and permission surface survived the build.
+      #
+      # This MUST stay a call to a checked-in script. It was once an inline
+      # `node -e '...'`, and the assertions contain single quotes
+      # (`script-src 'self'`) which terminated the surrounding single-quoted
+      # shell string — so the check compared against `script-src self` and could
+      # never pass. Keep the logic in a file where no shell quoting applies, and
+      # where `npm run verify:bundle` runs the identical code locally.
+      - name: Verify built bundle
+        run: npm run verify:bundle

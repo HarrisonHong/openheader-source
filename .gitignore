@@ -1,0 +1,7 @@
+node_modules/
+.wxt/
+.output/
+stats.html
+.claude/
+*.local
+.DS_Store

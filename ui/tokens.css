@@ -1,0 +1,111 @@
+/*
+ * Design tokens — the single source of truth for colour, spacing, radii and
+ * type scale. Components reference these variables; never a hard-coded value.
+ *
+ * Dark mode is driven entirely by `prefers-color-scheme`. There is deliberately
+ * no in-extension theme toggle: the extension should look like part of the
+ * browser, and the browser already knows the user's preference.
+ *
+ * Colour pairs are contrast-checked against WCAG AA in both themes by
+ * ui/tokens.test.ts, which parses this file. Changing a colour without keeping
+ * the ratio fails the build.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* --- Type ------------------------------------------------------------- */
+  /* `system-ui` first so the UI reads as browser chrome, not a web page. */
+  --ui-font-sans:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ui-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --ui-text-xs: 11px;
+  --ui-text-sm: 12px;
+  --ui-text-md: 13px;
+  --ui-text-lg: 15px;
+  --ui-text-xl: 18px;
+
+  --ui-leading-tight: 1.25;
+  --ui-leading-normal: 1.5;
+
+  --ui-weight-normal: 400;
+  --ui-weight-medium: 500;
+  --ui-weight-semibold: 600;
+
+  /* --- Space (4px base) -------------------------------------------------- */
+  --ui-space-0: 0;
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-5: 20px;
+  --ui-space-6: 24px;
+  --ui-space-8: 32px;
+
+  /* --- Radii ------------------------------------------------------------- */
+  --ui-radius-sm: 4px;
+  --ui-radius-md: 6px;
+  --ui-radius-lg: 10px;
+  --ui-radius-full: 999px;
+
+  /* --- Layout ------------------------------------------------------------ */
+  /* Chromium clamps popups to 800x600. 360px is the well-behaved width, and
+     560px of scrollable height leaves headroom for browser zoom. */
+  --ui-popup-width: 360px;
+  --ui-popup-max-height: 560px;
+
+  /* --- Motion ------------------------------------------------------------ */
+  --ui-duration-fast: 120ms;
+  --ui-ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  /* --- Elevation --------------------------------------------------------- */
+  --ui-shadow-sm: 0 1px 2px rgb(16 18 22 / 8%);
+  --ui-shadow-md: 0 4px 12px rgb(16 18 22 / 10%);
+
+  /* --- Colour: light ----------------------------------------------------- */
+  --ui-color-bg: #ffffff;
+  --ui-color-bg-subtle: #f5f6f8;
+  --ui-color-surface: #ffffff;
+  --ui-color-surface-hover: #f0f1f4;
+  --ui-color-border: #d5d9e0;
+  --ui-color-border-strong: #848c9c;
+  --ui-color-text: #14161a;
+  --ui-color-text-muted: #565e6c;
+  --ui-color-accent: #4338ca;
+  --ui-color-accent-hover: #3730a3;
+  --ui-color-on-accent: #ffffff;
+  --ui-color-focus: #4338ca;
+  --ui-color-danger: #b42318;
+  --ui-color-danger-bg: #fef3f2;
+  --ui-color-success: #05603a;
+  --ui-color-success-bg: #ecfdf3;
+  --ui-color-warning: #93370d;
+  --ui-color-warning-bg: #fffaeb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ui-shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+    --ui-shadow-md: 0 4px 12px rgb(0 0 0 / 50%);
+
+    --ui-color-bg: #131519;
+    --ui-color-bg-subtle: #1a1d23;
+    --ui-color-surface: #1a1d23;
+    --ui-color-surface-hover: #22262e;
+    --ui-color-border: #2f343d;
+    --ui-color-border-strong: #646f80;
+    --ui-color-text: #e8eaee;
+    --ui-color-text-muted: #a2aab8;
+    --ui-color-accent: #a5b4fc;
+    --ui-color-accent-hover: #c7d2fe;
+    --ui-color-on-accent: #131519;
+    --ui-color-focus: #a5b4fc;
+    --ui-color-danger: #fda29b;
+    --ui-color-danger-bg: #2a1614;
+    --ui-color-success: #75e0a7;
+    --ui-color-success-bg: #10241b;
+    --ui-color-warning: #fec84b;
+    --ui-color-warning-bg: #2a2010;
+  }
+}

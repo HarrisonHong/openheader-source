@@ -1,0 +1,10 @@
+/* Popup-specific shell sizing. Chromium clamps popups to 800x600; we sit well
+   inside that so browser zoom still has headroom. */
+
+html,
+body {
+  width: var(--ui-popup-width);
+  min-width: var(--ui-popup-width);
+  max-width: var(--ui-popup-width);
+  overflow: hidden;
+}
