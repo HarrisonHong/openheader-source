@@ -336,14 +336,15 @@ export async function revokeOrigins(origins: readonly string[]): Promise<OriginR
       revoked: false,
       reason: 'kept',
       message:
-        `Chrome kept access to ${origins.join(', ')}. That happens when the access comes from a ` +
-        'broader grant covering this site — revoke that one instead, or remove it from chrome://extensions.',
+        `The browser kept access to ${origins.join(', ')}. That happens when the access comes from a ` +
+        'broader grant covering this site — revoke that one instead, or remove it from the extensions ' +
+        'page of your browser.',
     };
   } catch (cause) {
     return {
       revoked: false,
       reason: 'error',
-      message: `Chrome would not hand back ${origins.join(', ')}: ${
+      message: `The browser would not hand back ${origins.join(', ')}: ${
         cause instanceof Error ? cause.message : String(cause)
       }`,
     };

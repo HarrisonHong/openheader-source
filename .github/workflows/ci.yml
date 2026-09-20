@@ -36,7 +36,7 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Build
+      - name: Build (Chrome)
         run: npm run build
 
       # Belt and braces: assert the shipped bundle has no dynamic-code sinks and
@@ -50,3 +50,20 @@ jobs:
       # where `npm run verify:bundle` runs the identical code locally.
       - name: Verify built bundle
         run: npm run verify:bundle
+
+      # Edge is a shipped target, so it gets the same gate rather than being
+      # trusted to Chromium parity. The two builds are byte-identical today;
+      # verifying both is what would catch the day they stop being.
+      - name: Build (Edge)
+        run: npm run build:edge
+
+      - name: Verify built bundle (Edge)
+        run: npm run verify:bundle:edge
+
+      # The two builds being byte-identical is what lets docs/architecture.md,
+      # docs/edge.md and PRIVACY.md treat Edge as the same artifact rather than a
+      # second one to audit. That was measured by hand once; running
+      # `npm run verify:parity` here measures it every time, so the claim cannot
+      # go stale without the build going red.
+      - name: Verify Chrome/Edge parity
+        run: npm run verify:parity

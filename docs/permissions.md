@@ -37,6 +37,13 @@ allows. **None of these produces an install-time permission warning.**
 | `declarativeNetRequestWithHostAccess` | Lets your rules actually change request and response headers. | It is the API that performs the extension's single purpose. Chrome does not offer it as an optional permission, and a header editor that cannot edit headers has no first-run state worth showing. | None. Unlike plain `declarativeNetRequest`, the WithHostAccess variant shows **no** install warning and can act only on hosts you have separately granted. | 2026-07-31 |
 | `activeTab` | Lets the popup offer "Allow on *this site*" for the page you are looking at. | It only has meaning at the moment you click the extension, which is exactly when the popup needs it. Chrome grants it for the active tab, for that invocation only, and it expires when the tab navigates. | None. | 2026-07-31 |
 
+Every row above holds on Microsoft Edge as well as Chrome. Adding the Edge build
+target widened nothing: the Edge manifest is byte-identical to the Chrome one.
+Microsoft documents `declarativeNetRequestWithHostAccess` with the same
+semantics we rely on, and the `optional_host_permissions` envelope — which
+Microsoft's manifest reference omits — was tested directly in Edge 151 and
+behaves as it does in Chrome. See [edge.md](edge.md).
+
 ### Why not `debugger`
 
 `debugger` is Chrome's most invasive permission. It triggers a severe install

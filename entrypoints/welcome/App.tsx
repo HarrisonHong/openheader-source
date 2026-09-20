@@ -33,7 +33,7 @@ export function WelcomeApp(): JSX.Element {
         <header class="ui-row">
           <img class="ui-brand-mark" src="/icon/48.png" alt="" width={32} height={32} />
           <h1 class="ui-title">
-            {isPrivacyNotice ? 'What changed in OpenHeader' : 'Welcome to OpenHeader'}
+            {isPrivacyNotice ? 'What changed in Headerman' : 'Welcome to Headerman'}
           </h1>
         </header>
 
@@ -69,7 +69,7 @@ export function WelcomeApp(): JSX.Element {
           </p>
           <p class="ui-muted">
             It does <strong>not</strong> request the <span class="ui-mono">debugger</span>{' '}
-            permission — the one that shows Chrome&rsquo;s most severe install warning and a
+            permission, the one that shows the browser&rsquo;s most severe install warning and a
             persistent &ldquo;started debugging this browser&rdquo; banner. The only feature that
             needs it, rewriting response <em>bodies</em>, is not part of this extension.
           </p>

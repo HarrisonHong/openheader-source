@@ -304,12 +304,19 @@ is a two-line change to `wxt.config.ts`.
 globals defeat lint rules (you cannot ban what you cannot see) and make review
 harder. WXT APIs are imported explicitly from `#imports`.
 
-### Chrome first, nothing Chrome-only
+### Chrome and Edge, nothing browser-specific
 
-`manifestVersion: 3` and Chrome is the only target built today. Nothing in the
-codebase is Chrome-specific: all extension API access goes through WXT's
-`browser` namespace, so `wxt build -b firefox|edge|safari` remains available when
-someone decides to run it.
+`manifestVersion: 3`, built for two targets: `npm run build` and
+`npm run build:edge`. Nothing in the codebase is Chrome-specific — all extension
+API access goes through WXT's `browser` namespace — and that is now demonstrated
+rather than asserted: the two builds emit a byte-identical `manifest.json` and
+byte-identical JS, which `npm run verify:parity` re-measures in `check` and in
+CI, and the Edge artifact is verified in a real Edge, not assumed from Chromium
+parity. See [edge.md](edge.md).
+
+So there is one artifact verified twice, not two artifacts to keep in step: a
+change that breaks Edge breaks Chrome too. `wxt build -b firefox|safari` remains
+available, but neither is built or verified here, so neither is claimed.
 
 ## Testing
 
@@ -332,17 +339,22 @@ someone decides to run it.
 | zod's `jitless` setting being in force before any schema is built | `lib/zod-config.test.ts` |
 | WCAG AA contrast in both themes, parsed from the shipped CSS | `ui/tokens.test.ts` |
 | The manifest's four icons existing, square, and sized to spec | `tests/icons.test.ts` |
+| The product's name in the manifest and the page titles, and the store's 75-character limit on it | `tests/identity.test.ts` |
 | Security lint rules actually firing | `tests/security-lint.test.ts` |
 | The built-bundle verifier firing on broken bundles | `tests/verify-bundle.test.ts` |
-| The CI workflow calling that verifier, never an inline `node -e` | `tests/ci-workflow.test.ts` |
+| The Chrome/Edge parity check firing on a divergent build | `tests/verify-parity.test.ts` |
+| The CI workflow calling those verifiers for both targets, never an inline `node -e` | `tests/ci-workflow.test.ts` |
 
 ### Verifying in a real browser
 
-`npm run verify:browser` (after `npm run build`) launches Chrome, installs the
-built extension over CDP, creates a rule through the real message contract, and
-reads the headers a real page received on a `fetch` POST and an
-`XMLHttpRequest`. It is not part of `npm run check` because it needs a Chrome
-binary, but it is the only check that proves the product actually works.
+`npm run verify:browser` (after `npm run build`) launches the browser `CHROME`
+names, `google-chrome` by default, installs the built extension over CDP,
+creates a rule through the real message contract, and reads the headers a real
+page received on a `fetch` POST and an `XMLHttpRequest`. It is not part of
+`npm run check` because it needs a browser binary, but it is the only check that
+proves the product actually works.
+`npm run verify:browser:edge` runs the same script over the Edge build and
+refuses to fall back to Chrome; see [edge.md](edge.md).
 
 It also saves two rules together, one of them carrying a header value Chrome
 would refuse, and asserts that the other rule's header still reaches a real

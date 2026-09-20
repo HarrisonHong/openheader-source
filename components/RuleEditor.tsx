@@ -120,7 +120,7 @@ export function RuleEditor({
 
       <MatcherList
         legend="Except"
-        hint="A request matching any of these is left alone — regular expressions included, which Chrome has no built-in exclusion field for."
+        hint="A request matching any of these is left alone, regular expressions included, which browsers offer no built-in exclusion field for."
         matchers={rule.exclude}
         emptyMessage="No exceptions."
         onSet={(exclude) => set((current) => ({ ...current, exclude }))}

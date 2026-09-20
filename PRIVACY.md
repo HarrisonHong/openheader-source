@@ -95,6 +95,10 @@ The extension complies with the Chrome Web Store Limited Use policy by not
 collecting data at all. There is no data to use, transfer, or sell. Data that is
 never collected cannot be repurposed later, which is the point.
 
+The same holds for the Microsoft Edge Add-ons developer policies, which the
+extension is also distributed under: the Edge build is byte-identical to the
+Chrome one, so every statement in this policy applies to it unchanged.
+
 ## Changes to this policy
 
 If the disclosed data practices ever change, the disclosure version at the top of
@@ -111,7 +115,8 @@ shows you the change — you will not have to come looking for it.
 ## Contact
 
 Support and privacy questions go to the developer contact address published on
-this extension's Chrome Web Store listing — it is shown on the listing page
+this extension's store listing — on the Chrome Web Store or on Microsoft Edge
+Add-ons, whichever you installed from. It is shown on the listing page
 under **Support**. Reaching it needs no account anywhere, which is why it is
 named first, and it still works for everything.
 

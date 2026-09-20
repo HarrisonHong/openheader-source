@@ -548,7 +548,7 @@ async function buildRegexSupport(
           ? { supported: true }
           : {
               supported: false,
-              reason: `Chrome rejected it${result.reason ? ` (${result.reason})` : ''}.`,
+              reason: `The browser rejected it${result.reason ? ` (${result.reason})` : ''}.`,
             },
       );
     } catch {

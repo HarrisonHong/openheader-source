@@ -1,12 +1,14 @@
 /**
- * Proves the built extension really edits headers, in a real Chrome.
+ * Proves the built extension really edits headers, in a real browser.
  *
  * Lint, tests and `verify-bundle.mjs` check artefacts; this checks behaviour. It
- * installs the extension Chrome would install, creates a rule through the real
- * message contract, and reads the headers a real page received on a real `fetch`
- * POST and a real `XMLHttpRequest`.
+ * installs the extension the browser would install, creates a rule through the
+ * real message contract, and reads the headers a real page received on a real
+ * `fetch` POST and a real `XMLHttpRequest`.
  *
  * Run:  npm run build && npm run verify:browser
+ *       For Edge, after `npm run build:edge`:
+ *       CHROME=/opt/microsoft/msedge/msedge npm run verify:browser:edge
  * Exits 0 when every check passes, 1 on a failed check, 2 on a harness error.
  *
  * Several traps shape how it does that (see docs/architecture.md). Chrome 137+
@@ -34,6 +36,23 @@ const CHROME = process.env.CHROME ?? 'google-chrome';
 const CDP_PORT = Number(process.env.CDP_PORT ?? 9333);
 const ECHO_PORT = Number(process.env.ECHO_PORT ?? 8781);
 const ECHO = `http://localhost:${ECHO_PORT}`;
+
+// The Edge run proves nothing if it silently installs the Edge build in Chrome,
+// and there is no portable path to an Edge binary to default to — so
+// `verify:browser:edge` sets EXPECT_BROWSER and the caller has to name the
+// binary rather than inheriting the Chrome default. What that binary turns out
+// to be is settled after launch, by `assertExpectedBrowser()`: the path is a
+// caller-authored string, routinely a wrapper script, and says nothing about
+// what it execs.
+const EXPECT_BROWSER = process.env.EXPECT_BROWSER ?? null;
+
+if (EXPECT_BROWSER === 'edge' && !process.env.CHROME) {
+  console.error(
+    'verify:browser:edge will not fall back to the Chrome default: a green run against Chrome ' +
+      'proves nothing about Edge.\nRun: CHROME=/opt/microsoft/msedge/msedge npm run verify:browser:edge',
+  );
+  process.exit(2);
+}
 
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
 
@@ -156,7 +175,7 @@ const ADD_RULE = `(async () => {
     resourceTypes: ${RESOURCE_TYPES},
     requestMethods: [],
     headers: [
-      { id: id(), enabled: true, target: 'request', operation: 'set', name: 'X-Debug', value: 'openheader' },
+      { id: id(), enabled: true, target: 'request', operation: 'set', name: 'X-Debug', value: 'headerman' },
       { id: id(), enabled: true, target: 'response', operation: 'set', name: 'X-Injected', value: 'yes' }
     ],
     notes: ''
@@ -205,7 +224,7 @@ const ADD_UNDECIDABLE_RULE = `(async () => {
  *
  * `updateDynamicRules` is atomic, so a header value Chrome will not accept used
  * to make it reject the entire batch — every rule stopped applying while every
- * badge still read "Active — Chrome is applying this rule". The value is caught
+ * badge still read "Active. The browser is applying this rule". The value is caught
  * before Chrome is asked now, so the cost is the one rule that owns it. This
  * replaces the profile's rules rather than appending, so the two statuses below
  * are the only ones and their order is the order written here.
@@ -247,8 +266,8 @@ async function main() {
   };
 
   const echoServer = await startEchoServer();
-  const profileDir = mkdtempSync(join(tmpdir(), 'openheader-profile-'));
-  const overlayDir = mkdtempSync(join(tmpdir(), 'openheader-granted-'));
+  const profileDir = mkdtempSync(join(tmpdir(), 'headerman-profile-'));
+  const overlayDir = mkdtempSync(join(tmpdir(), 'headerman-granted-'));
 
   const chrome = spawn(
     CHROME,
@@ -285,6 +304,7 @@ async function main() {
 
   try {
     const version = await waitForCdp();
+    assertExpectedBrowser(version);
     const browser = await connect(version.webSocketDebuggerUrl);
 
     const evaluate = async (expression, session) => {
@@ -438,12 +458,12 @@ async function main() {
 
     check(
       'POST fetch carries the injected request header',
-      results?.postRequestHeaders?.['x-debug'] === 'openheader',
+      results?.postRequestHeaders?.['x-debug'] === 'headerman',
     );
     check('POST fetch sees the injected response header', results?.postResponseInjected === 'yes');
     check(
       'XHR carries the injected request header',
-      results?.xhrRequestHeaders?.['x-debug'] === 'openheader',
+      results?.xhrRequestHeaders?.['x-debug'] === 'headerman',
     );
     check('XHR sees the injected response header', results?.xhrResponseInjected === 'yes');
 
@@ -508,6 +528,26 @@ async function main() {
   process.exit(failures.length === 0 ? 0 : 1);
 }
 
+/**
+ * The browser that actually opened the debugging port, from its own mouth.
+ *
+ * `/json/version` reports `Edg/151.0.4129.93` for Edge and `Chrome/...` for
+ * Chrome. Asserting on that rather than on `CHROME` is the difference between
+ * proving the Edge build runs in Edge and proving the caller typed a path with
+ * "edge" in it.
+ */
+function assertExpectedBrowser(version) {
+  if (EXPECT_BROWSER !== 'edge') return;
+  const brand = version.Browser ?? '(none reported)';
+  if (!brand.startsWith('Edg/')) {
+    throw new Error(
+      `EXPECT_BROWSER=edge, but the browser at ${CHROME} identifies itself as "${brand}". ` +
+        'Point CHROME at Microsoft Edge — a run against anything else proves nothing about Edge.',
+    );
+  }
+  console.log(`  ok  the browser under test is ${brand}`);
+}
+
 async function waitForCdp() {
   for (let attempt = 0; attempt < 40; attempt++) {
     try {
@@ -516,7 +556,7 @@ async function waitForCdp() {
       await sleep(500);
     }
   }
-  throw new Error(`Chrome never opened a debugging port on ${CDP_PORT}. Is ${CHROME} installed?`);
+  throw new Error(`No debugging port opened on ${CDP_PORT}. Is ${CHROME} installed?`);
 }
 
 main().catch((cause) => {

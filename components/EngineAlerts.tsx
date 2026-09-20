@@ -55,7 +55,7 @@ export function EngineAlerts({ engine, saveError }: EngineAlertsProps): JSX.Elem
     alerts.push(
       <Callout key="verify" tone="warning" title="The browser did not keep what we installed">
         <p>
-          After installing your rules we read them back out of Chrome and they did not match:{' '}
+          After installing your rules we read them back out of the browser and they did not match:{' '}
           {engine.verification.detail} Your rules may not be applying. Reloading the extension
           usually clears this.
         </p>

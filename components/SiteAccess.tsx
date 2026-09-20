@@ -66,8 +66,8 @@ export function SiteAccess({
       if (!result.granted) {
         setPermissionError(
           result.reason === 'denied'
-            ? 'Chrome access was declined. The rule stays saved and will start applying if you grant access later.'
-            : (result.message ?? 'Chrome could not grant that access.'),
+            ? 'Access was declined. The rule stays saved and will start applying if you grant access later.'
+            : (result.message ?? 'That access could not be granted.'),
         );
       }
       onPermissionsChanged();
@@ -178,8 +178,8 @@ export function SiteAccess({
       <Callout tone="info">
         <p>
           For <span class="ui-mono">fetch</span> and <span class="ui-mono">XHR</span> requests
-          Chrome also needs access to the page that <em>makes</em> the request, not just the URL
-          being requested. If a rule looks active but nothing changes on a background request, add
+          the browser also needs access to the page that <em>makes</em> the request, not just the
+          URL being requested. If a rule looks active but nothing changes on a background request, add
           the site you are testing <em>from</em> as well.
         </p>
       </Callout>

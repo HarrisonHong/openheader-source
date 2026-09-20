@@ -44,8 +44,8 @@ export function RuleStatusDetail({
       {needsAccess ? (
         <Callout tone="warning" title="Waiting for site access">
           <p>
-            Chrome will not let an extension change headers on a site you have not granted access
-            to. This rule needs:
+            An extension cannot change headers on a site you have not granted access to. This
+            rule needs:
           </p>
           <ul class="ui-stack ui-stack--1">
             {status.missingOrigins.map((origin) => (

@@ -139,26 +139,26 @@ export function checkRegexSupport(pattern: string): RegexSupport {
     return {
       supported: false,
       reason:
-        'Lookahead ((?= …) or (?! …)) is not supported. Chrome matches with RE2, which has no lookaround.',
+        'Lookahead ((?= …) or (?! …)) is not supported. Rule matching uses RE2, which has no lookaround.',
     };
   }
   if (/\(\?<[=!]/.test(pattern)) {
     return {
       supported: false,
       reason:
-        'Lookbehind ((?<= …) or (?<! …)) is not supported. Chrome matches with RE2, which has no lookaround.',
+        'Lookbehind ((?<= …) or (?<! …)) is not supported. Rule matching uses RE2, which has no lookaround.',
     };
   }
   if (/\\[1-9]/.test(pattern.replace(/\\\\/g, ''))) {
     return {
       supported: false,
-      reason: 'Backreferences (\\1, \\2, …) are not supported. Chrome matches with RE2.',
+      reason: 'Backreferences (\\1, \\2, …) are not supported. Rule matching uses RE2.',
     };
   }
   if (/\(\?>/.test(pattern)) {
     return {
       supported: false,
-      reason: 'Atomic groups ((?> …)) are not supported. Chrome matches with RE2.',
+      reason: 'Atomic groups ((?> …)) are not supported. Rule matching uses RE2.',
     };
   }
 
@@ -333,7 +333,7 @@ export function compileDocument(
             code: 'rule-limit-exceeded',
             field: 'rule',
             message:
-              `This rule was not installed: Chrome allows at most ${maxRules} header rules at once, ` +
+              `This rule was not installed: the browser allows at most ${maxRules} header rules at once, ` +
               'and that limit is already reached. Disable or delete some rules, then re-enable this one.',
           });
           ruleDnr = [];
@@ -348,7 +348,7 @@ export function compileDocument(
           code: 'shared-exclusion-band',
           field: 'exclude',
           message:
-            `${suppressible.size} active rules use URL or regex exclusions. Chrome applies those as ` +
+            `${suppressible.size} active rules use URL or regex exclusions. The browser applies those as ` +
             'shared exemptions, so a request excluded by one of these rules is exempt from all of ' +
             'them. Use domain exclusions where you can — those are per-rule and exact.',
         });
@@ -440,8 +440,8 @@ function siteAccessProblems(rule: HeaderRule, required: readonly string[]): Rule
       field: 'sites',
       message:
         derived.undecidable.length > 0
-          ? 'Chrome needs to know which sites this rule may touch, and a regex or "URL contains" condition does not say. Add the sites under Site access.'
-          : 'This rule names no sites, so Chrome will not let it change any headers. Add at least one site.',
+          ? 'The browser needs to know which sites this rule may touch, and a regex or "URL contains" condition does not say. Add the sites under Site access.'
+          : 'This rule names no sites, so the browser will not let it change any headers. Add at least one site.',
     });
   }
 
@@ -513,7 +513,7 @@ function analyseRule(
       warnings.push({
         code: 'unsupported-resource-type',
         field: 'resourceTypes',
-        message: `This version of Chrome does not know the resource type "${type}", so it was left out of the rule.`,
+        message: `This browser version does not know the resource type "${type}", so it was left out of the rule.`,
       });
     }
   }
@@ -642,7 +642,7 @@ function analyseHeader(
         field: 'headers',
         headerId: header.id,
         message:
-          `Chrome cannot append to the request header "${name}" — it allows appending only to: ` +
+          `The browser cannot append to the request header "${name}". It allows appending only to: ` +
           `${APPENDABLE_REQUEST_HEADERS.join(', ')}. Use Set instead, or change the header.`,
       });
       return null;
@@ -663,7 +663,7 @@ function analyseHeader(
       field: 'headers',
       headerId: header.id,
       message:
-        `The value of "${name}" contains ${describeCharacter(offending)}, which Chrome will not ` +
+        `The value of "${name}" contains ${describeCharacter(offending)}, which the browser will not ` +
         'accept in a header value. A line break copied along with a token is the usual cause — ' +
         're-copy the value without it.',
     });
@@ -760,7 +760,7 @@ function urlConditionOf(
         code: 'regex-unsupported',
         field,
         matcherId: matcher.id,
-        message: `Chrome cannot use this regular expression. ${support.reason ?? ''}`.trim(),
+        message: `The browser cannot use this regular expression. ${support.reason ?? ''}`.trim(),
       });
       return null;
     }
@@ -773,7 +773,7 @@ function urlConditionOf(
       field,
       matcherId: matcher.id,
       message:
-        'Chrome only matches URL patterns made of ASCII characters. Use the percent-encoded form of the URL, or switch this condition to a regular expression.',
+        'Only URL patterns made of ASCII characters can be matched. Use the percent-encoded form of the URL, or switch this condition to a regular expression.',
     });
     return null;
   }
@@ -960,7 +960,7 @@ function buildStatus(input: {
     state: 'active',
     summary:
       input.dnrRuleIds.length > 0
-        ? 'Active — Chrome is applying this rule.'
+        ? 'Active. The browser is applying this rule.'
         : 'Active, but it produced no browser rules. Please report this.',
   };
 }

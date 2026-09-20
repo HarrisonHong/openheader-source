@@ -1,13 +1,13 @@
 # Security Policy
 
-OpenHeader's source is published so it can be audited. If you audit it and find
+Headerman's source is published so it can be audited. If you audit it and find
 something, this is where to send it.
 
 ## Supported version
 
-Version 1.0.0 is the current release, and it is the only version that receives
-security fixes. There is no support matrix beyond that: the fix goes into the
-next release, and the next release is what users get.
+This source tree builds version 1.1.0, and that is the version security fixes
+are written against. There is no support matrix beyond that: the fix goes into
+the next release, and the next release is what users get.
 
 ## Reporting a vulnerability
 
@@ -51,6 +51,7 @@ is no hosted surface to test. In scope is the extension itself:
   applying without saying so.
 - Dynamic code execution or remote code loading reachable in the shipped bundle.
 
-Out of scope: the Chrome Web Store listing infrastructure, Chrome itself, and
-reports that amount to "an extension with granted host access can change headers
-on those hosts" — that is the product, and the grant is per-site and revocable.
+Out of scope: the Chrome Web Store and Microsoft Edge Add-ons listing
+infrastructure, the browsers themselves, and reports that amount to "an
+extension with granted host access can change headers on those hosts" — that is
+the product, and the grant is per-site and revocable.

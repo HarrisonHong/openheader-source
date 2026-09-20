@@ -28,12 +28,18 @@ export function ShortcutList({ shortcuts }: ShortcutListProps): JSX.Element {
         <div class="ui-shortcut" key={shortcut.id}>
           <dt>{shortcut.description}</dt>
           <dd class="ui-shortcut__keys">
-            {shortcut.keys.map((key, index) => (
-              <Fragment key={`${shortcut.id}-${key}`}>
-                {index > 0 ? <span aria-hidden="true">+</span> : null}
-                <Kbd>{key}</Kbd>
-              </Fragment>
-            ))}
+            {shortcut.keys.length === 0 ? (
+              // An unbound command (the user cleared it in the browser) is
+              // stated, not hidden — an empty cell would read as an omission.
+              <span class="ui-muted">Not set</span>
+            ) : (
+              shortcut.keys.map((key, index) => (
+                <Fragment key={`${shortcut.id}-${key}`}>
+                  {index > 0 ? <span aria-hidden="true">+</span> : null}
+                  <Kbd>{key}</Kbd>
+                </Fragment>
+              ))
+            )}
           </dd>
         </div>
       ))}

@@ -9,8 +9,13 @@ import { defineConfig } from 'wxt';
  */
 export default defineConfig({
   srcDir: '.',
-  // Chrome is the only target we build today. Nothing in this codebase is
-  // Chrome-specific, so `wxt build -b firefox|edge|safari` stays available.
+  // Chrome and Edge are both built and both shipped — `npm run build` and
+  // `npm run build:edge`. Nothing in this codebase is Chrome-specific: the two
+  // builds produce a byte-identical manifest and byte-identical JS, so there is
+  // one artifact verified twice rather than two artifacts. The Edge build is
+  // proven in a real Edge, not assumed from Chromium parity — see
+  // docs/edge.md. Firefox and Safari stay available to `wxt build -b` but are
+  // neither built nor verified here, so do not claim them.
   manifestVersion: 3,
 
   // Auto-imports are disabled: every symbol in this codebase has a visible
@@ -24,13 +29,13 @@ export default defineConfig({
 
   manifest: {
     // `name` IS the Chrome Web Store listing title — the dashboard has no
-    // separate title field — so this is the long, keyword-bearing form (51 of
-    // the 75 characters Chrome allows). Everywhere a long title would look
-    // absurd the product is just "OpenHeader": `short_name`, the toolbar
-    // tooltip below, the page titles and the in-app headings.
-    // See docs/single-purpose.md, "On the name".
-    name: 'OpenHeader — Modify HTTP Request & Response Headers',
-    short_name: 'OpenHeader',
+    // separate title field — so this is the keyword-bearing form, carrying the
+    // phrase users actually search (30 of the 75 characters Chrome allows).
+    // Everywhere the tail would look absurd the product is just "Headerman":
+    // `short_name`, the toolbar tooltip below, the page titles and the in-app
+    // headings. See docs/single-purpose.md, "On the name".
+    name: 'Headerman — HTTP Header Editor',
+    short_name: 'Headerman',
     // Must stay consistent with docs/single-purpose.md.
     description:
       'Edit the HTTP request and response headers of the sites you choose. No account, no telemetry, no debugger permission.',
@@ -81,7 +86,7 @@ export default defineConfig({
     },
 
     action: {
-      default_title: 'OpenHeader',
+      default_title: 'Headerman',
     },
 
     icons: {

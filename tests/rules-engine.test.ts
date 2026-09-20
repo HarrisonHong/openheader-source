@@ -317,7 +317,7 @@ describe('applyRules', () => {
     const state = await applyRules({ backend: backend(), document: documentWith([rule]) });
 
     expect(state.statuses[0]?.state).toBe('unsupported');
-    expect(state.statuses[0]?.problems[0]?.message).toContain('Chrome rejected it');
+    expect(state.statuses[0]?.problems[0]?.message).toContain('The browser rejected it');
   });
 
   it('reads the rules back out of the browser and notices a mismatch', async () => {

@@ -20,37 +20,54 @@ reworded) into:
 | --- | --- |
 | Manifest description | `wxt.config.ts` → `manifest.description` |
 | Onboarding copy | `entrypoints/welcome/App.tsx` |
-| Store listing | Chrome Web Store dashboard |
+| Store listing | Chrome Web Store dashboard, and Microsoft Edge Add-ons via Partner Center |
 | README | `README.md` |
 
 ### On the name
 
-**Decided: the product name is `OpenHeader`.** It replaced the `Plain Headers`
-working title with the project owner's sign-off, and it is what ships.
+**Decided: the product name is `Headerman`.** It replaced `OpenHeader` with the
+project owner's sign-off on 2026-08-22, and it is what ships.
 
-**The store listing title is `OpenHeader — Modify HTTP Request & Response
-Headers`** (51 chars, inside Chrome's 75-character `name` limit), decided
-2026-08-04. It supersedes the earlier sign-off `OpenHeader — HTTP Header
-Editor`, which was found to be a live Chrome Web Store listing published
-2026-07-31 by an unrelated developer — publishing a byte-identical title would
-have put two identical items in one search page and invited the "misleading
-metadata" clause of the Listing Requirements policy. The brand token
-`OpenHeader` is kept because it is load-bearing across this repo, the package
-name and the licence; the differentiation is in the tail.
+**The store listing title is `Headerman — HTTP Header Editor`** (30 chars,
+inside Chrome's 75-character `name` limit), decided the same day.
+
+Why the rename: three Chrome Web Store extensions were called `OpenHeader`, and
+ours ranked third of three on its own name, behind one that predates it. A name
+you cannot win a search for is not a name you own. `Headerman` was checked on
+2026-08-22 and returns zero Chrome Web Store results and no Microsoft Edge
+Add-ons listing, so it is ownable outright. The tail keeps the phrase users
+actually search.
+
+The history this supersedes, kept because it is why the shape of the title is
+what it is:
+
+- The `Plain Headers` working title was replaced by `OpenHeader`, which shipped
+  until this rename.
+- The listing title was `OpenHeader — Modify HTTP Request & Response Headers`
+  (51 chars) from 2026-08-04. That long form itself superseded
+  `OpenHeader — HTTP Header Editor`, which was found to be a live Chrome Web
+  Store listing published 2026-07-31 by an unrelated developer — a
+  byte-identical title would have put two identical items in one search page and
+  invited the "misleading metadata" clause of the Listing Requirements policy.
+  `Headerman — HTTP Header Editor` is not that collision: the brand token
+  differs, which is the half a store search matches on.
 
 Two forms, and where each belongs:
 
 - **The long form** appears in exactly one place: `manifest.name` in
   `wxt.config.ts`. The Web Store dashboard has no title field — the listing
   title *is* `manifest.name` — so that is what the long form is for.
-- **`OpenHeader`** is the in-product name everywhere else, because a
-  51-character string does not fit a 360px popup header or a `short_name`:
+- **`Headerman`** is the in-product name everywhere else, because a title with a
+  descriptive tail does not fit a 360px popup header or a `short_name`:
   `short_name` and `action.default_title` in `wxt.config.ts`, the three
   entrypoint `index.html` titles, the headings in
   `entrypoints/{popup,options,welcome}/App.tsx`, and `README.md`.
 
-`scripts/verify-browser.mjs` asserts on the name indirectly through the header
-value it injects, so it changes with them.
+`tests/identity.test.ts` pins both forms, the 75-character limit and the three
+page titles, so a half-finished rename fails the suite. It pins them against its
+own constants, not against this document, so a name decided here has to be
+carried into that file by hand. `scripts/verify-browser.mjs` names the product
+in the header value it injects, so it changes with them.
 
 The rest of the listing — description, screenshots, promotional copy — is still
 outward-facing and still needs sign-off before publication.
@@ -96,7 +113,6 @@ Before any release:
 - [x] Every row in [permissions.md](permissions.md) traces to it.
 - [x] Nothing stored locally falls outside it.
 - [x] [PRIVACY.md](../PRIVACY.md) still accurately describes data practices.
-- [x] Store name signed off (product name `OpenHeader`; listing title
-      `OpenHeader — Modify HTTP Request & Response Headers`, decided
-      2026-08-04).
+- [x] Store name signed off (product name `Headerman`; listing title
+      `Headerman — HTTP Header Editor`, decided 2026-08-22).
 - [ ] Store listing copy signed off — description, screenshots, promotional copy.

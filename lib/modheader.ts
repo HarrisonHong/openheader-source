@@ -368,7 +368,7 @@ function convertHeaders(
     if (appendMode === 'comma') {
       note(
         'info',
-        `"${name}" used ModHeader's comma-separated append. Chrome appends with its own separator ` +
+        `"${name}" used ModHeader's comma-separated append. The browser appends with its own separator ` +
           'for this header, which is a comma for everything except Cookie.',
       );
     }
@@ -526,7 +526,7 @@ function convertUrlFilters(
       note(
         'warning',
         `A ${kind} URL filter was skipped: its pattern is ${pattern.length} characters, and ` +
-          `anything over ${MAX_URL_REGEX_LENGTH} is past what Chrome will compile, so it could ` +
+          `anything over ${MAX_URL_REGEX_LENGTH} is past what the browser will compile, so it could ` +
           'never have matched. Nothing was silently kept from it.',
       );
       continue;
@@ -576,7 +576,7 @@ function convertResourceFilters(
   if (unknown.size > 0) {
     note(
       'warning',
-      `Chrome has no request type called ${[...unknown].join(', ')}, so it was left out of the rule.`,
+      `There is no request type called ${[...unknown].join(', ')}, so it was left out of the rule.`,
     );
   }
 

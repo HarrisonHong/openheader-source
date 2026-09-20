@@ -34,7 +34,7 @@ export function PopupApp(): JSX.Element {
     <div class="ui-popup">
       <header class="ui-popup__header">
         <img class="ui-brand-mark" src="/icon/32.png" alt="" width={20} height={20} />
-        <h1 class="ui-heading">OpenHeader</h1>
+        <h1 class="ui-heading">Headerman</h1>
       </header>
 
       <main class="ui-popup__body" id="popup-main">

@@ -9,6 +9,7 @@ import { ProfilesPanel } from '../../components/ProfilesPanel';
 import { RulesPanel } from '../../components/RulesPanel';
 import { useRulesState } from '../../components/useRulesState';
 import { listGrantedPermissions, revokeOrigins } from '../../lib/permissions';
+import { commandShortcuts } from '../../lib/shortcuts';
 import type { ShortcutDefinition } from '../../ui';
 import {
   Button,
@@ -28,8 +29,15 @@ import {
  * has a problem cannot be hidden behind a tab the user never opens.
  */
 
-const SHORTCUTS: readonly ShortcutDefinition[] = [
-  { id: '_execute_action', description: 'Open the extension popup', keys: ['Alt', 'Shift', 'E'] },
+// The extension's own command bindings come from browser.commands.getAll() at
+// render time — never a hand-maintained copy, which could drift from the
+// manifest or from a user's rebinding at chrome://extensions/shortcuts. Only
+// the generic browser-behaviour keys below are static.
+const COMMAND_DESCRIPTIONS: Readonly<Record<string, string>> = {
+  _execute_action: 'Open the extension popup',
+};
+
+const GENERIC_SHORTCUTS: readonly ShortcutDefinition[] = [
   { id: 'popup-navigate', description: 'Move between controls', keys: ['Tab'] },
   { id: 'popup-activate', description: 'Activate the focused control', keys: ['Enter'] },
   { id: 'popup-toggle', description: 'Toggle the focused switch', keys: ['Space'] },
@@ -59,7 +67,7 @@ export function OptionsApp(): JSX.Element {
 
       <div class="ui-stack ui-stack--6">
         <header class="ui-stack ui-stack--1">
-          <h1 class="ui-title">OpenHeader</h1>
+          <h1 class="ui-title">Headerman</h1>
           <p class="ui-muted">
             Everything below is stored on this device only. There is no account, no telemetry and no
             network request of any kind.
@@ -124,12 +132,21 @@ export function OptionsApp(): JSX.Element {
 }
 
 function ShortcutsPanel(): JSX.Element {
+  const commands = useAsync(() => browser.commands.getAll(), []);
+
+  // Loading or failed: render only the generic keys rather than guessing at a
+  // binding — an assumed default is exactly the lie this derivation removes.
+  const shortcuts: readonly ShortcutDefinition[] =
+    commands.state.status === 'success'
+      ? [...commandShortcuts(commands.state.value, COMMAND_DESCRIPTIONS), ...GENERIC_SHORTCUTS]
+      : GENERIC_SHORTCUTS;
+
   return (
     <Panel
       title="Keyboard shortcuts"
       description="Every surface is fully operable from the keyboard."
     >
-      <ShortcutList shortcuts={SHORTCUTS} />
+      <ShortcutList shortcuts={shortcuts} />
       <Button
         variant="secondary"
         onClick={() => void browser.tabs.create({ url: 'chrome://extensions/shortcuts' })}
@@ -177,7 +194,7 @@ function PermissionsPanel({ onPermissionsChanged }: { onPermissionsChanged: () =
       <Callout tone="info">
         <p>
           This extension does not request the <span class="ui-mono">debugger</span> permission. That
-          is the permission that triggers Chrome&rsquo;s most severe install warning and the
+          is the permission that triggers the browser&rsquo;s most severe install warning and the
           persistent &ldquo;started debugging this browser&rdquo; banner, and the only feature that
           needs it — rewriting response <em>bodies</em> — is not part of this extension. If it is
           ever added it will be an opt-in module that asks at the moment you use it and can be

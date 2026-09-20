@@ -205,12 +205,13 @@ strip anyone else's. Adding a runtime dependency means adding it there too.
 Run before every release:
 
 ```bash
-npm run check                      # lint + typecheck + test + build + verify:bundle
+npm run check                      # lint + typecheck + test + both builds,
+                                   # verify:bundle for each + verify:parity
 npm audit --audit-level=moderate
 ```
 
-`npm run check` ends with `npm run verify:bundle`, which inspects the built
-output in `.output/chrome-mv3/` and fails on any of:
+`npm run check` runs `verify:bundle` against **both** shipped builds —
+`.output/chrome-mv3/` and `.output/edge-mv3/` — and fails on any of:
 
 - a CSP missing `script-src 'self'` or `object-src 'none'`; containing
   `unsafe-eval`, `wasm-unsafe-eval`, or `unsafe-inline`; or a `connect-src`
@@ -240,9 +241,11 @@ grep -rn "innerHTML" .output/chrome-mv3/ --include=*.js   # expect only Preact's
 ```
 
 `npm run verify:browser` goes one step further and installs the built extension
-in a real Chrome, asserting the same permission surface from inside the running
+in a real browser, asserting the same permission surface from inside the running
 extension and proving headers actually reach a `fetch` POST and an XHR with zero
-console errors.
+console errors. `npm run verify:browser:edge` does the same for the Edge build;
+pointing `CHROME` at an Edge binary runs it in Edge itself, which is how the
+Edge permission surface in [edge.md](edge.md) was established.
 
 Then load unpacked and confirm zero console errors in the popup, the options
 page, and the service worker.

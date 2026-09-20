@@ -1,9 +1,9 @@
 {
-  "name": "openheader",
-  "version": "1.0.0",
+  "name": "headerman",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
-  "description": "OpenHeader — edit the HTTP request and response headers of the sites you choose. No account, no telemetry, no debugger permission.",
+  "description": "Headerman — edit the HTTP request and response headers of the sites you choose. No account, no telemetry, no debugger permission.",
   "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "node": ">=20.19.0"
@@ -11,15 +11,20 @@
   "scripts": {
     "dev": "wxt",
     "build": "wxt build",
+    "build:edge": "wxt build -b edge",
     "zip": "wxt zip",
+    "zip:edge": "wxt zip -b edge",
     "compile": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
     "audit": "npm audit --audit-level=moderate",
     "verify:bundle": "node scripts/verify-bundle.mjs",
+    "verify:bundle:edge": "node scripts/verify-bundle.mjs .output/edge-mv3",
+    "verify:parity": "node scripts/verify-parity.mjs",
     "verify:browser": "node scripts/verify-browser.mjs",
-    "check": "npm run lint && npm run compile && npm run test && npm run build && npm run verify:bundle",
+    "verify:browser:edge": "EXT_DIR=.output/edge-mv3 EXPECT_BROWSER=edge node scripts/verify-browser.mjs",
+    "check": "npm run lint && npm run compile && npm run test && npm run build && npm run verify:bundle && npm run build:edge && npm run verify:bundle:edge && npm run verify:parity",
     "postinstall": "wxt prepare"
   },
   "dependencies": {
@@ -33,7 +38,7 @@
     "globals": "17.8.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.65.0",
-    "vitest": "4.1.10",
+    "vitest": "4.1.11",
     "wxt": "0.21.3"
   }
 }

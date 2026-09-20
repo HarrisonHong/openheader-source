@@ -46,6 +46,28 @@ function runsBundleVerification(workflow: string): boolean {
 }
 
 /**
+ * True when a step verifies the EDGE build too. Edge is a shipped target, so
+ * "it is Chromium, it will be fine" is exactly the assumption this asserts
+ * against — the gate has to run on the artifact that ships.
+ */
+function runsEdgeBundleVerification(workflow: string): boolean {
+  return commandsOf(workflow)
+    .split('\n')
+    .some((line) => /^\s*(-\s+)?run:\s*npm run verify:bundle:edge\s*$/.test(line));
+}
+
+/**
+ * True when a step proves the two builds are the same artifact. The
+ * byte-identity claim is load-bearing in three published documents, so it has
+ * to be measured rather than remembered.
+ */
+function runsParityVerification(workflow: string): boolean {
+  return commandsOf(workflow)
+    .split('\n')
+    .some((line) => /^\s*(-\s+)?run:\s*npm run verify:parity\s*$/.test(line));
+}
+
+/**
  * True when any command inlines a JS body into the shell. Flags `-e` and
  * `--eval` behind any number of other node flags, so neither
  * `node --input-type=module -e` nor `node --experimental-x --eval=...` slips by.
@@ -100,10 +122,61 @@ describe('CI workflow', () => {
     expect(PACKAGE.scripts['verify:bundle']).toBe('node scripts/verify-bundle.mjs');
   });
 
+  it('builds and verifies the Edge target in CI', () => {
+    expect(runsEdgeBundleVerification(WORKFLOW)).toBe(true);
+    expect(commandsOf(WORKFLOW)).toMatch(/run:\s*npm run build:edge\s*$/m);
+  });
+
+  it('notices when the Edge verification step is deleted', () => {
+    const without = WORKFLOW.split('\n')
+      .filter((line) => !/^\s*(-\s+)?run:\s*npm run verify:bundle:edge\s*$/.test(line))
+      .join('\n');
+    expect(runsEdgeBundleVerification(without)).toBe(false);
+    // The Chrome check must not stand in for the Edge one: `verify:bundle` is a
+    // prefix of `verify:bundle:edge`, so a looser test would still pass here.
+    expect(runsBundleVerification(without)).toBe(true);
+  });
+
+  it('points the Edge verification at the Edge output directory', () => {
+    expect(PACKAGE.scripts['verify:bundle:edge']).toBe(
+      'node scripts/verify-bundle.mjs .output/edge-mv3',
+    );
+    expect(PACKAGE.scripts['build:edge']).toBe('wxt build -b edge');
+  });
+
+  it('verifies Chrome/Edge parity in CI', () => {
+    expect(runsParityVerification(WORKFLOW)).toBe(true);
+  });
+
+  it('notices when the parity step is deleted', () => {
+    const without = WORKFLOW.split('\n')
+      .filter((line) => !/^\s*(-\s+)?run:\s*npm run verify:parity\s*$/.test(line))
+      .join('\n');
+    expect(runsParityVerification(without)).toBe(false);
+    // The explanatory comment still names the script, so a raw-text search
+    // would stay green here.
+    expect(without).toContain('npm run verify:parity');
+  });
+
+  it('points parity verification at the checked-in script', () => {
+    expect(PACKAGE.scripts['verify:parity']).toBe('node scripts/verify-parity.mjs');
+  });
+
+  it('makes the Edge browser check name its own binary', () => {
+    // EXT_DIR alone would install the Edge build in google-chrome and pass — a
+    // green run that proves nothing about Edge. EXPECT_BROWSER makes the script
+    // refuse rather than default.
+    expect(PACKAGE.scripts['verify:browser:edge']).toContain('EXT_DIR=.output/edge-mv3');
+    expect(PACKAGE.scripts['verify:browser:edge']).toContain('EXPECT_BROWSER=edge');
+  });
+
   it('includes bundle verification in the local check script', () => {
     // Local `npm run check` must exercise everything CI does, or CI-only
     // failures are discovered by pushing rather than by checking.
     expect(PACKAGE.scripts['check']).toContain('verify:bundle');
+    expect(PACKAGE.scripts['check']).toContain('verify:bundle:edge');
+    expect(PACKAGE.scripts['check']).toContain('build:edge');
+    expect(PACKAGE.scripts['check']).toContain('verify:parity');
   });
 
   it('keeps the CSP assertions quoted in a place shell quoting cannot reach', () => {
